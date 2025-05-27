@@ -14,8 +14,7 @@ public class Todo extends Parent {
         return userId;
     }
 
-    public Todo(int userId, int todoId, String title, String description) {
-        this.userId = userId;
+    public Todo(int todoId, String title, String description) {
         this.todoId = todoId;
         this.title = title;
         this.description = description;

@@ -7,16 +7,8 @@ import util.Util;
 import java.util.Arrays;
 
 public class MainService {
-    private User [] userList = new User[10];
+    private static User [] userList = new User[10];
     private Todo [] todoList = new Todo[10];
-
-    public Todo[] getTodoList() {
-        return todoList;
-    }
-
-    public void setTodoList(Todo[] todoList) {
-        this.todoList = todoList;
-    }
 
     public boolean registerProfile(String name, String phoneNumber, String password) {
         for (User user : userList) {
@@ -59,8 +51,10 @@ public class MainService {
     public boolean createTodo(String title, String description) {
         for (int i = 0; i < todoList.length; i++) {
             if (todoList[i] == null) {
-                Todo todo = new Todo(Util.currentUserId, Util.todoId++, title, description);
+                Todo todo = new Todo(Util.todoId++, title, description);
+                todo.setUserId(Util.currentUserId);
                 todoList[i] = todo;
+                System.out.println(todo.getId());
                 return true;
             }
         }
@@ -84,7 +78,7 @@ public class MainService {
 
     public void editTodo(int todoId, Todo updateTodo) {
         for (int i = 0; i < todoList.length; i++) {
-            if (todoList[i] != null && todoList[i].getTodoId() == todoId ) {
+            if (todoList[i] != null && todoList[i].getId() == todoId ) {
                 todoList[i] = updateTodo;
                 return;
             }
@@ -110,22 +104,29 @@ public class MainService {
     }
 
     public void checkToExist(int todoId) {
-        for (Todo value : todoList) {
-            if (value != null && value.getTodoId() == todoId) {
+        for (int i = 0; i < todoList.length; i++) {
+            Todo existing = todoList[i];
+
+            if (existing != null && existing.getTodoId() == todoId) {
                 String title = Util.getStr("Enter title");
                 String description = Util.getStr("Enter description");
 
-                Todo todo = new Todo(Util.currentUserId, todoId, title, description);
-                editTodo(todoId, todo);
+                Todo todo = new Todo(todoId, title, description);
+                todo.setUserId(Util.currentUserId);
+                todo.setCompleted(existing.isCompleted());
 
-                return;
-            }else {
+                editTodo(todoId, todo);
+                existing.setTitle(title);
+                existing.setDescription(description);
+                System.out.println("Todo successfully updated!");
                 return;
             }
         }
+
+        System.out.println("Todo not found.");
     }
 
-    public void createDefaultUser() {
+    public static void createDefaultUser() {
         User user1 = new User("Axmadullo", "997494262", "123");
         User user2 = new User("Alyona", "123456789", "123");
         user1.setId(Util.userId++);
@@ -135,17 +136,4 @@ public class MainService {
         userList[1] = user2;
     }
 
-    public void createDefaultTodo() {
-        Todo todo1 = new Todo(1, 1, "Features of PDP Academy", "PDP is my favorite place to learn Programming!");
-        Todo todo2 = new Todo(1, 2, "Features of My School", "My School is the best place to learn English!");
-
-        Todo todo3 = new Todo(2, 1, "Features of PDP Academy", "PDP is my favorite place to learn Programming!");
-        Todo todo4 = new Todo(2, 2, "Features of My School", "My School is the best place to learn English!");
-
-        todoList[0] = todo1;
-        todoList[1] = todo2;
-        todoList[2] = todo3;
-        todoList[3] = todo4;
-
-    }
 }

@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class Util {
     public static int userId = 1;
-    public static int todoId = 4;
+    public static int todoId = 1;
     public static int currentUserId = 0;
 
     public static Scanner intScanner = new Scanner(System.in);
@@ -19,4 +19,5 @@ public class Util {
         System.out.printf("%s: ", text);
         return doubleScanner.nextLine();
     }
+
 }

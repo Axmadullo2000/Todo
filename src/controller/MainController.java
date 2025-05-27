@@ -4,14 +4,17 @@ import entity.Todo;
 import service.MainService;
 import util.Util;
 
+import static service.MainService.createDefaultUser;
+import static util.Util.getNum;
+import static util.Util.getStr;
+
 public class MainController {
 
     private MainService mainService = new MainService();
 
     public void authMenu() {
 
-        mainService.createDefaultUser();
-        mainService.createDefaultTodo();
+        createDefaultUser();
 
         while (true) {
             System.out.println("""
@@ -20,7 +23,7 @@ public class MainController {
                     0. Quit
                 """);
 
-            int menu = Util.getNum("Choose an option");
+            int menu = getNum("Choose an option");
 
             switch (menu) {
                 case 1 -> {
@@ -40,14 +43,14 @@ public class MainController {
     }
 
     private void signUp() {
-        String name = Util.getStr("Enter your name");
-        String phoneNumber = Util.getStr("Enter phone number");
-        String password = Util.getStr("Enter password");
+        String name = getStr("Enter your name");
+        String phoneNumber = getStr("Enter phone number");
+        String password = getStr("Enter password");
 
         if (mainService.registerProfile(name, phoneNumber, password)) {
             System.out.println("Successfully registered!");
 
-            MainMenu();
+            mainMenu();
         }else {
             System.out.println("This user already exists!");
         }
@@ -55,21 +58,21 @@ public class MainController {
     }
 
     private void signIn() {
-        String phoneNumber = Util.getStr("Enter phone number");
-        String password = Util.getStr("Enter password");
+        String phoneNumber = getStr("Enter phone number");
+        String password = getStr("Enter password");
 
         if (mainService.loginToProfile(phoneNumber, password)) {
             String username = mainService.getUserById(Util.currentUserId);
             System.out.println("Welcome " + username);
 
-            MainMenu();
+            mainMenu();
         }else {
             System.out.println("Throw away!");
         }
 
     }
 
-    private void MainMenu() {
+    private void mainMenu() {
         while (true) {
             System.out.println("""
                     1. Create todo
@@ -78,7 +81,7 @@ public class MainController {
                     4. Delete from todo list
                     0. Back to Main Menu
                     """);
-            int option = Util.getNum("Choose");
+            int option = getNum("Choose");
 
             switch (option) {
                 case 1 -> {
@@ -105,16 +108,20 @@ public class MainController {
     private void editTodo() {
         showTodos();
 
-        int todoId = Util.getNum("Which todo do you want to change?");
+        int todoId = getNum("Which todo do you want to change?");
 
         mainService.checkToExist(todoId);
 
-        mainService.completeTodo(todoId);
+        int markAsComplete = getNum("Do you want to mark it as completed? 1 - Yes, 0 - No");
+
+        if (markAsComplete == 1) {
+            mainService.completeTodo(todoId);  // Отмечаем задачу как выполненную
+        }
     }
 
     private void deleteTodo() {
         showTodos();
-        int todoId = Util.getNum("Which todo do you want to delete?");
+        int todoId = getNum("Which todo do you want to delete?");
         mainService.deleteTodo(todoId);
     }
 
@@ -126,7 +133,7 @@ public class MainController {
                2. Completed todos
                0. Back to Main Menu
                \s""");
-        int option = Util.getNum("");
+        int option = getNum("");
 
         if (option == 1) {
             for (Todo todo : todos) {
@@ -142,8 +149,8 @@ public class MainController {
     }
 
     private void createToDo() {
-        String title = Util.getStr("Enter title");
-        String description = Util.getStr("Enter description");
+        String title = getStr("Enter title");
+        String description = getStr("Enter description");
 
         if (mainService.createTodo(title, description)) {
             System.out.println("Todo has successfully created!");
